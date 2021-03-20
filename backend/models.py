@@ -1,0 +1,32 @@
+from sqlalchemy import Column, Integer, ForeignKey, String, Boolean, Enum
+from sqlalchemy.orm import relationship
+from database import Base, engine
+import enum
+
+class BusinessSize(enum.Enum):
+  UNSET = 0
+  MICRO = 1
+  SMALL = 2
+  MEDIUM = 3
+
+
+class BusinessType(enum.Enum):
+  UP = 1
+  IP = 2
+
+
+class BusinessModel(Base):
+  __tablename__ = 'business'
+  id = Column(Integer, primary_key=True)
+  name = Column(String(500))
+  business_type = Column(Enum(BusinessType))
+  size = Column(Enum(BusinessSize))
+  OGRN = Column(Integer)
+  INN  = Column(Integer)
+  type = Column(String(700))
+  area = Column(String(100))
+  office = Column(String(100))
+  recreated = Column(Boolean)
+  licensed = Column(Boolean)
+    
+Base.prepare(engine)
