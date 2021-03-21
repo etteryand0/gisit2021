@@ -1,8 +1,16 @@
-import React from 'react';
+import React, {useState} from 'react';
 import styled from 'styled-components';
 import Navigation from './components/Navigation.jsx';
 import Header from './components/Header.jsx';
 import Map from './components/Map.jsx';
+import Modal from './components/Modal.jsx';
+
+// import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/react-hooks';
+
+// const client = new ApolloClient({
+//   uri: 'http://localhost:5000/graphql',
+//   cache: new InMemoryCache()
+// });
 
 const Root = styled.div`
   display: flex;
@@ -20,12 +28,15 @@ const HorizontalLine = styled.div`
 `;
 
 const App = () => {
+  const [showModal, setShowModal] = useState(false);
+
   return (
     <Root>
       <Header />
       <HorizontalLine />
       <Navigation />
-      <Map />
+      <Modal showModal={showModal} setShowModal={setShowModal}></Modal>
+      <Map setShowModal={setShowModal} showModal={showModal} />
     </Root>
   );
 }

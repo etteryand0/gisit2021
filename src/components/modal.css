@@ -1,0 +1,10 @@
+.ReactModal__Content--after-open {
+  width: 50vw;
+  inset: unset!important;
+}
+
+.ReactModal__Overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

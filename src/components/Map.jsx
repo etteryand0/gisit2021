@@ -3,6 +3,28 @@ import { MapContainer, GeoJSON } from 'react-leaflet';
 import styled from 'styled-components';
 import './transparentMap.css';
 import geojson from './ulusPolygons';
+import {useQuery, gql} from '@apollo/react-hooks';
+
+const BUSINESS_NAME = (uuid) => { return gql`
+  query {
+    getBusiness(uuid:${uuid}) {
+      name
+    }
+  }
+`};
+
+const BusinessName = () => {
+  const { loading, error, data } = useQuery(BUSINESS_NAME(1))
+
+  if (loading) return 'Loading...'
+  if (error) return `Error! ${error}`
+  
+  return (
+      <>
+        {data.getBusiness.name}
+      </>
+  )
+}
 
 const defineUlus = (e, layer, setUlusTitle, setShowShortData) => {
   layer.setStyle({fillColor:'#E38C3B'});
@@ -21,33 +43,48 @@ const MapWrap = styled.div`
   height: 83vh;
   left: 0;
   top: 17vh;
+  display: inherit;
+
+  ${props => props.display && `display: none` } 
 `;
 
 const ShortDataWrap = styled.div`
   display: flex;
   justify-content: flex-end;
   align-items: center;
+  transition: 2;
+
+  ${props => !props.visible && `
+    display: none;
+  `}
 `;
 
 const ShortData = styled.div`
   border-radius: 0.625rem;
   width: 15vw;
   height: 50vh;
-  background: blue;
+  background: white;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
 `;
 
-const Map = () => {
+const Map = (props) => {
   const [showShortData, setShowShortData] = useState(false);
   const [ulusTitle, setUlusTitle] = useState('Якутск');
 
+  const map = {
+    width:'100%', height:'100%',
+    display: props.showModal && 'none'
+  }
+
   return (
     <>
-      <MapWrap>
+      {/* <BusinessName /> */}
+      <MapWrap display={props.showModal}>
         <MapContainer 
           center={[67.943, 130.096]} // [67.713, 134.2]
           zoomSnap={0.25} 
-          zoom={3.5}
-          style={{width: '100%', height: '100%'}}
+          zoom={3.75}
+          style={map}
           zoomControl={false}
           doubleClickZoom={false}
           dragging={false}
@@ -60,21 +97,19 @@ const Map = () => {
           <GeoJSON 
             data={geojson} 
             onEachFeature={(feature, layer) => layer.on({
-                // click: defineUlus, 
+                click: () => props.setShowModal(true), 
                 mouseover: (e) => defineUlus(e, layer, setUlusTitle, setShowShortData),
                 mouseout: () => undefineUlus(layer, setShowShortData),
-                // mouseover: () => layer.setStyle({fillColor:'#E38C3B'}),
-                // mouseout: () => layer.setStyle({fillColor: '#fff'}),
               })} 
             style={mapStyle} 
           />
         </MapContainer>
       </MapWrap>
-      { showShortData && <ShortDataWrap>
+      <ShortDataWrap visible={showShortData}>
         <ShortData>
           {ulusTitle}
         </ShortData>
-      </ShortDataWrap>}
+      </ShortDataWrap>
     </>
   );
 }

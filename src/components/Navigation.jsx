@@ -27,14 +27,14 @@ const Filter = styled.div`
 
   width: 20%;
   ${props => props.wide && `
-    width: 50%;
+    width: 38%;
   `}
 `;
 
 const RegionInfo = styled.div`
   display: flex;
   flex-direction: column;
-  width: 30vw;
+  width: 20vw;
 `;
 
 const Region = styled.div`
@@ -85,8 +85,8 @@ const Navigation = () => {
       <Bar wide="true">
         <Filter wide="true">
           <Option active="true">Все</Option>
-          <Option>Мелкий</Option>
-          <Option>Маленький</Option>
+          <Option>Микро</Option>
+          <Option>Малый</Option>
           <Option>Средний</Option>
         </Filter>
         <Filter>
