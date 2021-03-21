@@ -145,15 +145,15 @@ const Modal_ = ({showModal, setShowModal, ulus }) => {
           <Results>
             <Num>
               <NumTitle style={{textAlign:'center'}}>Микро</NumTitle>
-              <Number>26</Number>
+              <Number>{randomInteger(10,30)}</Number>
             </Num>
             <Num>
               <NumTitle style={{textAlign:'center'}}>Малые</NumTitle>
-              <Number>17</Number>
+              <Number>{randomInteger(10,30)}</Number>
             </Num>
             <Num>
               <NumTitle style={{textAlign:'center'}}>Средние</NumTitle>
-              <Number>14</Number>
+              <Number>{randomInteger(10,20)}</Number>
             </Num>
           </Results>
         </Content>
