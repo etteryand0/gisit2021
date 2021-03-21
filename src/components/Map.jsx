@@ -115,7 +115,10 @@ const Map = (props) => {
           <ShortTitle>
             {ulusShort.name}
           </ShortTitle>
-          {ulusShort.population}
+          <Column>
+            <Bald>Население</Bald>
+            <Value>{ulusShort.population}</Value>
+          </Column>
         </ShortData>
       </ShortDataWrap>
     </>
@@ -126,8 +129,9 @@ const ShortTitle = styled.div`
   height: 20%;
   display: flex;
   justify-content: center;
+  align-items: center;
+  font-weight: 600;
 `;
-
 const mapStyle = {
   color:'#000', 
   fillColor: '#fff', 
@@ -136,5 +140,24 @@ const mapStyle = {
   ShadowRoot: 1,
   fillOpacity: 1,
 }
+const Column = styled.div`
+  flex-direction: column;
+  display: flex;
+  flex-grow: 1;
+
+  justify-content: center;
+  align-items: center;
+  margin-top: 30px;
+`;
+const Bald = styled.div`
+  font-weight: 600;
+`;
+const Value = styled.div`
+  margin-left: 10px;
+  font-weight: 500;
+  font-size: 18px;
+  flex-grow: 1;
+`;
+
 
 export default Map;
