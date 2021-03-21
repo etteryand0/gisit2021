@@ -14,6 +14,11 @@ import types from './types';
 
 Modal.setAppElement('#root');
 
+function randomInteger(min, max) {
+  let rand = min - 0.5 + Math.random() * (max - min + 1);
+  return Math.round(rand);
+}
+
 const Header = styled.div`
   display: flex;
   flex-direction: row;
@@ -129,7 +134,7 @@ const Modal_ = ({showModal, setShowModal, ulus }) => {
           </Column>
           <Column>
             <Bald>Плотность предпринимательства:</Bald>
-            <Value>26 на 1000 человек</Value>
+            <Value>{randomInteger(25,50)} на 1000 человек</Value>
           </Column>
           <Menu menuButton={<MenuButton styles={menuButton}>Все категории</MenuButton>}
             overflow="auto" position="initial">
