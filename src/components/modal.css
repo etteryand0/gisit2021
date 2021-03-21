@@ -1,6 +1,13 @@
 .ReactModal__Content--after-open {
   width: 50vw;
+  height: 60vh;
   inset: unset!important;
+  border-radius: 10px;
+  /* background-color: #F8F8F8!important; */
+}
+
+.ReactModal__Content {
+  overflow-x: hidden!important;
 }
 
 .ReactModal__Overlay {

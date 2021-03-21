@@ -29,14 +29,15 @@ const HorizontalLine = styled.div`
 
 const App = () => {
   const [showModal, setShowModal] = useState(false);
+  const [ulus, setUlus] = useState({id:0,name:''});
 
   return (
     <Root>
       <Header />
       <HorizontalLine />
       <Navigation />
-      <Modal showModal={showModal} setShowModal={setShowModal}></Modal>
-      <Map setShowModal={setShowModal} showModal={showModal} />
+      <Modal showModal={showModal} setShowModal={setShowModal} ulus={ulus}></Modal>
+      <Map setShowModal={setShowModal} showModal={showModal} setUlus={setUlus} />
     </Root>
   );
 }

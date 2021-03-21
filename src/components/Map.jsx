@@ -37,6 +37,11 @@ const undefineUlus = (layer, setShowShortData) => {
   setShowShortData(false);
 }
 
+const ulusDetails = (e, setShowModal, setUlus) => {
+  setUlus(e.target.feature.properties)
+  setShowModal(true)
+}
+
 const MapWrap = styled.div`
   position: absolute;
   width: 100vw;
@@ -97,7 +102,7 @@ const Map = (props) => {
           <GeoJSON 
             data={geojson} 
             onEachFeature={(feature, layer) => layer.on({
-                click: () => props.setShowModal(true), 
+                click: (e) => ulusDetails(e, props.setShowModal, props.setUlus), 
                 mouseover: (e) => defineUlus(e, layer, setUlusTitle, setShowShortData),
                 mouseout: () => undefineUlus(layer, setShowShortData),
               })} 
