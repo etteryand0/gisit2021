@@ -26,9 +26,9 @@ const BusinessName = () => {
   )
 }
 
-const defineUlus = (e, layer, setUlusTitle, setShowShortData) => {
+const defineUlus = (e, layer, setUlusShort, setShowShortData) => {
   layer.setStyle({fillColor:'#E38C3B'});
-  setUlusTitle(e.target.feature.properties.name);
+  setUlusShort(e.target.feature.properties);
   setShowShortData(true);
 }
 
@@ -67,14 +67,14 @@ const ShortDataWrap = styled.div`
 const ShortData = styled.div`
   border-radius: 0.625rem;
   width: 15vw;
-  height: 50vh;
+  height: 30vh;
   background: white;
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
 `;
 
 const Map = (props) => {
   const [showShortData, setShowShortData] = useState(false);
-  const [ulusTitle, setUlusTitle] = useState('Якутск');
+  const [ulusShort, setUlusShort] = useState({id:0,name:'',population:1});
 
   const map = {
     width:'100%', height:'100%',
@@ -103,7 +103,7 @@ const Map = (props) => {
             data={geojson} 
             onEachFeature={(feature, layer) => layer.on({
                 click: (e) => ulusDetails(e, props.setShowModal, props.setUlus), 
-                mouseover: (e) => defineUlus(e, layer, setUlusTitle, setShowShortData),
+                mouseover: (e) => defineUlus(e, layer, setUlusShort, setShowShortData),
                 mouseout: () => undefineUlus(layer, setShowShortData),
               })} 
             style={mapStyle} 
@@ -112,12 +112,21 @@ const Map = (props) => {
       </MapWrap>
       <ShortDataWrap visible={showShortData}>
         <ShortData>
-          {ulusTitle}
+          <ShortTitle>
+            {ulusShort.name}
+          </ShortTitle>
+          {ulusShort.population}
         </ShortData>
       </ShortDataWrap>
     </>
   );
 }
+
+const ShortTitle = styled.div`
+  height: 20%;
+  display: flex;
+  justify-content: center;
+`;
 
 const mapStyle = {
   color:'#000', 

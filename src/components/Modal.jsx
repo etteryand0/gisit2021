@@ -125,7 +125,7 @@ const Modal_ = ({showModal, setShowModal, ulus }) => {
         <Content>
           <Column>
             <Bald>Население:</Bald>
-            <Value>2425</Value>
+            <Value>{ulus.population}</Value>
           </Column>
           <Column>
             <Bald>Плотность предпринимательства:</Bald>

@@ -29,7 +29,7 @@ const HorizontalLine = styled.div`
 
 const App = () => {
   const [showModal, setShowModal] = useState(false);
-  const [ulus, setUlus] = useState({id:0,name:''});
+  const [ulus, setUlus] = useState({id:0,name:'',population:1});
 
   return (
     <Root>
