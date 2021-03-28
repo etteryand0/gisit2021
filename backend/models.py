@@ -11,8 +11,8 @@ class BusinessSize(enum.Enum):
 
 
 class BusinessType(enum.Enum):
-  UP = 1
-  IP = 2
+  U = 1
+  I = 2
 
 
 class BusinessModel(Base):
@@ -24,8 +24,7 @@ class BusinessModel(Base):
   OGRN = Column(Integer)
   INN  = Column(Integer)
   type = Column(String(700))
-  area = Column(String(100))
-  office = Column(String(100))
+  area = Column(Integer)
   recreated = Column(Boolean)
   licensed = Column(Boolean)
     
