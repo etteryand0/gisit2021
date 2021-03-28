@@ -11,14 +11,43 @@ class Business(SQLAlchemyObjectType):
 class Query(graphene.ObjectType):
   node = graphene.relay.Node.Field()
   getBusiness = graphene.Field(Business, uuid = graphene.Int())
-  allBusinesses = graphene.Field(Business)
+  filterBusinesses = graphene.Field(
+    lambda: graphene.List(Business), 
+    size=graphene.String(),
+    recreated=graphene.Boolean(),
+    area=graphene.Int(),
+    licensed=graphene.Boolean(),
+    business_type=graphene.String(1),
+    type_=graphene.String(),
+  )
   
   def resolve_getBusiness(args, info, uuid):
     query = Business.get_query(info)
-    # print(dir(query))
+
     return query.get(uuid)
 
-  def resolve_allBusinesses(args, info):
-    pass
+  def resolve_filterBusinesses(args, info, 
+                               size=None, recreated=None, area=None,
+                               licensed=None, business_type=None, type_=None):
+    query = Business.get_query(info)
+
+    if size:
+      query = query.filter_by(size=size)
+    if recreated is not None:
+      query = query.filter_by(recreated=recreated)
+    if area:
+      query = query.filter_by(area=area)
+    if licensed is not None:
+      query = query.filter_by(licensed=licensed)
+    if business_type:
+      query = query.filter_by(business_type=business_type)
+    # if type_:
+    #   query = query.filter_by(business_type=business_type)
+    # Issue: Need to filter type_ by first 2 chars
+
+    response = query.all()
+
+    return response
+
 
 schema = graphene.Schema(query=Query, types=[Business])
