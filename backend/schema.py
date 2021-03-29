@@ -17,7 +17,7 @@ class Query(graphene.ObjectType):
     recreated=graphene.Boolean(),
     area=graphene.Int(),
     licensed=graphene.Boolean(),
-    business_type=graphene.String(1),
+    business_type=graphene.String(),
     type_=graphene.String(),
   )
   
