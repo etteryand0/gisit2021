@@ -83,6 +83,23 @@ for i, column in enumerate(df['area']):
   df['area'][i] = Ulus[ulus].value
 
 
+print('Splitting types...')
+
+
+
+type_ = list()
+
+for column in df['type']:
+  if type(column) == float:
+    type_.append(None)
+    continue
+
+  data = column.split('.')[0]
+  type_.append(int(data))
+
+df['type'] = type_
+
+
 print('Saving results...')
 
 df.drop('town', inplace=True, axis=1)

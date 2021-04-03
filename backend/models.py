@@ -23,7 +23,7 @@ class BusinessModel(Base):
   size = Column(Enum(BusinessSize))
   OGRN = Column(Integer)
   INN  = Column(Integer)
-  type = Column(String(700))
+  type = Column(Integer)
   area = Column(Integer)
   recreated = Column(Boolean)
   licensed = Column(Boolean)

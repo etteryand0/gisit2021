@@ -18,7 +18,7 @@ class Query(graphene.ObjectType):
     area=graphene.Int(),
     licensed=graphene.Boolean(),
     business_type=graphene.String(),
-    type_=graphene.String(),
+    type_=graphene.Int(),
   )
   
   def resolve_getBusiness(args, info, uuid):
@@ -41,8 +41,8 @@ class Query(graphene.ObjectType):
       query = query.filter_by(licensed=licensed)
     if business_type:
       query = query.filter_by(business_type=business_type)
-    # if type_:
-    #   query = query.filter_by(business_type=business_type)
+    if type_:
+      query = query.filter_by(type=type_)
     # Issue: Need to filter type_ by first 2 chars
 
     response = query.all()
