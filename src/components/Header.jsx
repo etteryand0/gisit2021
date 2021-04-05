@@ -4,8 +4,9 @@ import searchIcon from './searchIcon.svg';
 
 const Headr = styled.header`
   display: flex;
-  height: 10vh;
+  min-height: 10vh;
   flex-direction: row;
+  flex-wrap: wrap;
   /* align-items: center; */
   margin-top: 5vh;
   justify-content: space-between;
@@ -16,11 +17,12 @@ const Logo = styled.div`
   font-weight: 600;
   font-size: 3rem;
   color: rgba(44, 43, 44, 1);
+  /* min-width: 18vw; */
 `;
 
 const Icons = styled.div`
   display: flex;
-  width: 18vw;
+  min-width: 18vw;
   justify-content: space-between;
   flex-direction: row;
 `;

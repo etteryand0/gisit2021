@@ -3,28 +3,6 @@ import { MapContainer, GeoJSON } from 'react-leaflet';
 import styled from 'styled-components';
 import './transparentMap.css';
 import geojson from './ulusPolygons';
-import {useQuery, gql} from '@apollo/react-hooks';
-
-const BUSINESS_NAME = (uuid) => { return gql`
-  query {
-    getBusiness(uuid:${uuid}) {
-      name
-    }
-  }
-`};
-
-const BusinessName = () => {
-  const { loading, error, data } = useQuery(BUSINESS_NAME(1))
-
-  if (loading) return 'Loading...'
-  if (error) return `Error! ${error}`
-  
-  return (
-      <>
-        {data.getBusiness.name}
-      </>
-  )
-}
 
 const defineUlus = (e, layer, setUlusShort, setShowShortData) => {
   layer.setStyle({fillColor:'#E38C3B'});
@@ -44,7 +22,7 @@ const ulusDetails = (e, setShowModal, setUlus) => {
 
 const MapWrap = styled.div`
   position: absolute;
-  width: 100vw;
+  width: 100%;
   height: 83vh;
   left: 0;
   top: 17vh;
@@ -83,16 +61,15 @@ const Map = (props) => {
 
   return (
     <>
-      {/* <BusinessName /> */}
-      <MapWrap display={props.showModal}>
+      <MapWrap display={props.showModal ? "true" : undefined}>
         <MapContainer 
           center={[67.943, 130.096]} // [67.713, 134.2]
           zoomSnap={0.25} 
           zoom={3.75}
           style={map}
-          zoomControl={false}
+          zoomControl={true}
           doubleClickZoom={false}
-          dragging={false}
+          dragging={true}
           scrollWheelZoom={false}
         >
           {/* <TileLayer

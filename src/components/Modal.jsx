@@ -1,5 +1,5 @@
-import React from 'react';
-import styled from 'styled-components'; 
+import React, { useState } from 'react';
+import styled from 'styled-components';
 import './modal.css';
 import Modal from 'react-modal';
 import {
@@ -9,14 +9,113 @@ import {
   SubMenu
 } from '@szhsin/react-menu';
 import '@szhsin/react-menu/dist/index.css';
+import { useQuery, gql } from '@apollo/react-hooks';
 import types from './types';
 
 
 Modal.setAppElement('#root');
 
-function randomInteger(min, max) {
-  let rand = min - 0.5 + Math.random() * (max - min + 1);
-  return Math.round(rand);
+const FILTER_BUSINESS = ({
+  businessType,
+  type, area,
+  licensed, recreated
+}) => {
+  let query;
+
+  if (licensed && recreated) {
+    query = gql`
+      query {
+        micro: filterBusinesses(
+          area: ${area}, licensed: ${licensed}, 
+          recreated: ${recreated}, businessType: "${businessType}", 
+          type_: ${type} size: "MICRO") {
+          licensed
+        }
+        small: filterBusinesses(
+          area: ${area}, licensed: ${licensed}, 
+          recreated: ${recreated}, businessType: "${businessType}", 
+          type_: ${type} size: "SMALL") {
+          licensed
+        }
+        medium: filterBusinesses(
+          area: ${area}, licensed: ${licensed}, 
+          recreated: ${recreated}, businessType: "${businessType}", 
+          type_: ${type} size: "MEDIUM") {
+          licensed
+        }
+      }
+    `;
+  } else if (licensed) {
+    query = gql`
+      query {
+        micro: filterBusinesses(
+          area: ${area}, licensed: ${licensed}, 
+          businessType: "${businessType}", 
+          type_: ${type} size: "MICRO") {
+          licensed
+        }
+        small: filterBusinesses(
+          area: ${area}, licensed: ${licensed}, 
+          businessType: "${businessType}", 
+          type_: ${type} size: "SMALL") {
+          licensed
+        }
+        medium: filterBusinesses(
+          area: ${area}, licensed: ${licensed}, 
+          businessType: "${businessType}", 
+          type_: ${type} size: "MEDIUM") {
+          licensed
+        }
+      }
+    `;
+  } else if (recreated) {
+    query = gql`
+      query {
+        micro: filterBusinesses(
+          area: ${area}, recreated: ${recreated}, 
+          businessType: "${businessType}", 
+          type_: ${type} size: "MICRO") {
+          licensed
+        }
+        small: filterBusinesses(
+          area: ${area}, recreated: ${recreated}, 
+          businessType: "${businessType}", 
+          type_: ${type} size: "SMALL") {
+          licensed
+        }
+        medium: filterBusinesses(
+          area: ${area}, recreated: ${recreated}, 
+          businessType: "${businessType}", 
+          type_: ${type} size: "MEDIUM") {
+          licensed
+        }
+      }
+    `;
+  } else {
+    query = gql`
+      query {
+        micro: filterBusinesses(
+          area: ${area}, 
+          businessType: "${businessType}", 
+          type_: ${type} size: "MICRO") {
+          licensed
+        }
+        small: filterBusinesses(
+          area: ${area},
+          businessType: "${businessType}", 
+          type_: ${type} size: "SMALL") {
+          licensed
+        }
+        medium: filterBusinesses(
+          area: ${area}, 
+          businessType: "${businessType}", 
+          type_: ${type} size: "MEDIUM") {
+          licensed
+        }
+      }
+    `;
+  }
+  return query;
 }
 
 const Header = styled.div`
@@ -50,6 +149,7 @@ const Wrap = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  cursor: pointer;
 `;
 
 const Content = styled.div`
@@ -79,12 +179,14 @@ const Value = styled.div`
 const Results = styled.div`
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   justify-content: space-between;
   height: 50%;
   margin-top: 20px;
 `;
 const Num = styled.div`
-  width: 30%;
+  width: 140px;
+  flex: ${window.innerWidth <= 560 ? '1 1 140px' : undefined};
   height: 100%;
   border-radius: 10px;
   display: flex;
@@ -107,13 +209,108 @@ const Number = styled.div`
   align-items: center;
   font-weight: 600;
   color:#E38C3B;
-  font-size: 64px;
+  font-size: ${window.innerWidth <= 560 ? 44 : 48}px;
   
 `;
 
-const Modal_ = ({showModal, setShowModal, ulus }) => {
+const Modal_ = ({ showModal, setShowModal, ulus }) => {
   const closeModal = () => { setShowModal(false) }
-  
+  const [businessType, setBusinessType] = useState('_');
+  const [recreated, setRecreated] = useState(false);
+  const [licensed, setLicensed] = useState(false);
+  const [type, setType] = useState(0);
+  const [typePlaceholder, setTypePlaceholder] = useState('Все категории')
+
+  const { loading, error, data } = useQuery(FILTER_BUSINESS({
+    businessType: businessType,
+    type: type,
+    area: ulus.id,
+    licensed: licensed,
+    recreated: recreated
+  }));
+
+  if (loading) {
+    return (
+      <Modal
+        isOpen={showModal}
+        onRequestClose={closeModal}
+        contentLabel="sdlkfsdfl"
+      >
+        <Wrap>
+          <Header>
+            <Title>{ulus.name}</Title>
+            <div style={{ alignItems: 'flex-end' }}>
+              <BackReq onClick={closeModal}>Назад</BackReq>
+            </div>
+          </Header>
+          <Content>
+            <Column>
+              <Bald>Население:</Bald>
+              <Value>{ulus.population}</Value>
+            </Column>
+            <Column>
+              <Bald>Плотность предпринимательства:</Bald>
+              <Value>Подсчитываем...</Value>
+            </Column>
+            <Menu menuButton={<MenuButton styles={window.innerWidth <= 560 ? { ...menuButton, ...responsiveMenuButton } : menuButton}>{typePlaceholder}</MenuButton>}
+              overflow="auto" position="initial">
+              <MenuItem style={menuItem} onClick={() => { setType(0); setTypePlaceholder('Все категории') }}>Все категории</MenuItem>
+              {types.map(value => {
+                const key = parseInt(value.split(' ')[0])
+
+                return <MenuItem key={key} style={menuItem} onClick={() => { setType(key); setTypePlaceholder(value) }}>{value}</MenuItem>
+              })}
+            </Menu>
+            <Bar wide="true">
+              <Filter>
+                <Option active={businessType === '_' ? "true" : undefined} onClick={() => setBusinessType('_')}>Все</Option>
+                <Option active={businessType === 'U' ? "true" : undefined} onClick={() => setBusinessType('U')}>ЮЛ</Option>
+                <Option active={businessType === 'I' ? "true" : undefined} onClick={() => setBusinessType('I')}>ИП</Option>
+              </Filter>
+              <Filter>
+                <Option active={recreated ? "true" : undefined} onClick={() => setRecreated(!recreated)}>Лицензия</Option>
+                <Option active={licensed ? "true" : undefined} onClick={() => setLicensed(!licensed)}>Востановленный</Option>
+              </Filter>
+            </Bar>
+            <Results>
+              <Num>
+                <NumTitle style={{ textAlign: 'center' }}>Микро</NumTitle>
+                <Number style={{ fontSize: 12 }}>Загрузка</Number>
+              </Num>
+              <Num>
+                <NumTitle style={{ textAlign: 'center' }}>Малые</NumTitle>
+                <Number style={{ fontSize: 12 }}>Загрузка</Number>
+              </Num>
+              <Num>
+                <NumTitle style={{ textAlign: 'center' }}>Средние</NumTitle>
+                <Number style={{ fontSize: 12 }}>Загрузка</Number>
+              </Num>
+            </Results>
+          </Content>
+        </Wrap>
+      </Modal>
+    )
+  }
+
+  if (error) {
+    <Modal
+      isOpen={showModal}
+      onRequestClose={closeModal}
+      contentLabel="sdlkfsdfl"
+    >
+      <Wrap>
+        <Header>
+          <Title>{ulus.name}</Title>
+          Ошибка! {error.message}
+        </Header>
+      </Wrap>
+    </Modal>
+  }
+
+
+  const length = data.micro.length + data.small.length + data.medium.length;
+  const businesses = Math.floor(length / ulus.population * 1000);
+
   return (
     <Modal
       isOpen={showModal}
@@ -123,7 +320,7 @@ const Modal_ = ({showModal, setShowModal, ulus }) => {
       <Wrap>
         <Header>
           <Title>{ulus.name}</Title>
-          <div style={{alignItems: 'flex-end'}}>
+          <div style={{ alignItems: 'flex-end' }}>
             <BackReq onClick={closeModal}>Назад</BackReq>
           </div>
         </Header>
@@ -134,26 +331,40 @@ const Modal_ = ({showModal, setShowModal, ulus }) => {
           </Column>
           <Column>
             <Bald>Плотность предпринимательства:</Bald>
-            <Value>{randomInteger(25,50)} на 1000 человек</Value>
+            <Value>{businesses} на 1000 человек</Value>
           </Column>
-          <Menu menuButton={<MenuButton styles={menuButton}>Все категории</MenuButton>}
+          <Menu menuButton={<MenuButton styles={window.innerWidth <= 560 ? { ...menuButton, ...responsiveMenuButton } : menuButton}>{typePlaceholder}</MenuButton>}
             overflow="auto" position="initial">
+            <MenuItem style={menuItem} onClick={() => { setType(0); setTypePlaceholder('Все категории') }}>Все категории</MenuItem>
             {types.map(value => {
-              return <MenuItem key={value} style={menuItem}>{value}</MenuItem>
+              const key = parseInt(value.split(' ')[0])
+
+              return <MenuItem key={key} style={menuItem} onClick={() => { setType(key); setTypePlaceholder(value) }}>{value}</MenuItem>
             })}
           </Menu>
+          <Bar wide="true">
+            <Filter>
+              <Option active={businessType === '_' ? "true" : undefined} onClick={() => setBusinessType('_')}>Все</Option>
+              <Option active={businessType === 'U' ? "true" : undefined} onClick={() => setBusinessType('U')}>ЮЛ</Option>
+              <Option active={businessType === 'I' ? "true" : undefined} onClick={() => setBusinessType('I')}>ИП</Option>
+            </Filter>
+            <Filter>
+              <Option active={recreated ? "true" : undefined} onClick={() => setRecreated(!recreated)}>Лицензия</Option>
+              <Option active={licensed ? "true" : undefined} onClick={() => setLicensed(!licensed)}>Востановленный</Option>
+            </Filter>
+          </Bar>
           <Results>
             <Num>
-              <NumTitle style={{textAlign:'center'}}>Микро</NumTitle>
-              <Number>{randomInteger(10,30)}</Number>
+              <NumTitle style={{ textAlign: 'center' }}>Микро</NumTitle>
+              <Number>{data.micro.length}</Number>
             </Num>
             <Num>
-              <NumTitle style={{textAlign:'center'}}>Малые</NumTitle>
-              <Number>{randomInteger(10,30)}</Number>
+              <NumTitle style={{ textAlign: 'center' }}>Малые</NumTitle>
+              <Number>{data.small.length}</Number>
             </Num>
             <Num>
-              <NumTitle style={{textAlign:'center'}}>Средние</NumTitle>
-              <Number>{randomInteger(10,20)}</Number>
+              <NumTitle style={{ textAlign: 'center' }}>Средние</NumTitle>
+              <Number>{data.medium.length}</Number>
             </Num>
           </Results>
         </Content>
@@ -162,6 +373,45 @@ const Modal_ = ({showModal, setShowModal, ulus }) => {
   );
 }
 
+const Option = styled.div`
+  font-weight: 600;
+  font-size: 1.25rem;
+  color: #898989;
+  cursor: pointer;
+  /* margin-right: 1.875rem; */
+  text-transform: uppercase;
+  ${props => props.active && `
+    color: #000;
+  `}
+`;
+
+const Bar = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+  ${props => props.wide && `
+    min-height: 10vh;
+    align-items: center;
+  `}
+`;
+
+const Filter = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+  width: 100%;
+
+  min-width: 20%;
+  ${props => props.wide && `
+    min-width: 38%;
+  `}
+`;
+
+const responsiveMenuButton = {
+  maxWidth: Math.floor(window.innerWidth * 0.8)
+}
 const menuButton = {
   all: 'unset',
   background: '#fff',
@@ -169,6 +419,13 @@ const menuButton = {
   borderStyle: 'solid',
   borderColor: '#e8e8e8',
   height: 50,
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+
+  lineHeight: 1,
+  maxWidth: 460,
+  overflow: 'hidden',
+
   borderRadius: 10,
 
   fontFamily: 'Montserrat',
