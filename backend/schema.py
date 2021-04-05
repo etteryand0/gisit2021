@@ -34,15 +34,19 @@ class Query(graphene.ObjectType):
     if size:
       query = query.filter_by(size=size)
     if recreated is not None:
-      query = query.filter_by(recreated=recreated)
+      if recreated != '_':
+        query = query.filter_by(recreated=recreated)
     if area:
       query = query.filter_by(area=area)
     if licensed is not None:
-      query = query.filter_by(licensed=licensed)
+      if licensed != '_':
+        query = query.filter_by(licensed=licensed)
     if business_type:
-      query = query.filter_by(business_type=business_type)
+      if business_type != '_':
+        query = query.filter_by(business_type=business_type)
     if type_:
-      query = query.filter_by(type=type_)
+      if type_ != 0:
+        query = query.filter_by(type=type_)
     # Issue: Need to filter type_ by first 2 chars
 
     response = query.all()

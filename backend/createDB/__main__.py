@@ -94,7 +94,7 @@ for column in df['type']:
     type_.append(None)
     continue
 
-  data = column.split('.')[0]
+  data = column.split(' ')[0].split('.')[0]
   type_.append(int(data))
 
 df['type'] = type_
