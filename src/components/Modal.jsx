@@ -6,11 +6,11 @@ import {
   Menu,
   MenuItem,
   MenuButton,
-  SubMenu
 } from '@szhsin/react-menu';
 import '@szhsin/react-menu/dist/index.css';
 import { useQuery, gql } from '@apollo/react-hooks';
 import types from './types';
+import { Link } from 'react-router-dom';
 
 
 Modal.setAppElement('#root');
@@ -184,7 +184,9 @@ const Results = styled.div`
   height: 50%;
   margin-top: 20px;
 `;
-const Num = styled.div`
+const Num = styled(Link)`
+  all: unset;
+  color: #000;
   width: 140px;
   flex: ${window.innerWidth <= 560 ? '1 1 140px' : undefined};
   height: 100%;
@@ -221,13 +223,14 @@ const Modal_ = ({ showModal, setShowModal, ulus }) => {
   const [type, setType] = useState(0);
   const [typePlaceholder, setTypePlaceholder] = useState('Все категории')
 
-  const { loading, error, data } = useQuery(FILTER_BUSINESS({
+  const query = {
     businessType: businessType,
     type: type,
     area: ulus.id,
     licensed: licensed,
     recreated: recreated
-  }));
+  };
+  const { loading, error, data } = useQuery(FILTER_BUSINESS(query));
 
   if (loading) {
     return (
@@ -273,15 +276,15 @@ const Modal_ = ({ showModal, setShowModal, ulus }) => {
               </Filter>
             </Bar>
             <Results>
-              <Num>
+              <Num to="/">
                 <NumTitle style={{ textAlign: 'center' }}>Микро</NumTitle>
                 <Number style={{ fontSize: 12 }}>Загрузка</Number>
               </Num>
-              <Num>
+              <Num to="/">
                 <NumTitle style={{ textAlign: 'center' }}>Малые</NumTitle>
                 <Number style={{ fontSize: 12 }}>Загрузка</Number>
               </Num>
-              <Num>
+              <Num to="/">
                 <NumTitle style={{ textAlign: 'center' }}>Средние</NumTitle>
                 <Number style={{ fontSize: 12 }}>Загрузка</Number>
               </Num>
@@ -354,15 +357,15 @@ const Modal_ = ({ showModal, setShowModal, ulus }) => {
             </Filter>
           </Bar>
           <Results>
-            <Num>
+            <Num to={{pathname: "/details", query: {query: {...query, size: 'MICRO'}}}}>
               <NumTitle style={{ textAlign: 'center' }}>Микро</NumTitle>
               <Number>{data.micro.length}</Number>
             </Num>
-            <Num>
+            <Num to={{pathname: "/details", query: {query: {...query, size: 'SMALL'}}}}>
               <NumTitle style={{ textAlign: 'center' }}>Малые</NumTitle>
               <Number>{data.small.length}</Number>
             </Num>
-            <Num>
+            <Num to={{pathname: "/details", query: {query: {...query, size: 'MEDIUM'}}}}>
               <NumTitle style={{ textAlign: 'center' }}>Средние</NumTitle>
               <Number>{data.medium.length}</Number>
             </Num>

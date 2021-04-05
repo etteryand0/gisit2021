@@ -1,12 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
+import Details from './components/Details';
 
 import {
   ApolloProvider,
   ApolloClient,
   InMemoryCache,
 } from '@apollo/react-hooks';
+
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route
+} from "react-router-dom";
 
 
 const client = new ApolloClient({
@@ -16,7 +23,12 @@ const client = new ApolloClient({
 
 ReactDOM.render(
   <ApolloProvider client={client}>
-    <App />
+    <Router>
+      <Switch>
+        <Route path="/" exact component={App} />
+        <Route path="/details" component={Details} />
+      </Switch>
+    </Router>
   </ApolloProvider>,
   document.getElementById('root')
 );
