@@ -5,7 +5,7 @@ import os
 
 __dirname = os.path.abspath('.')
 
-path = os.path.join(__dirname, 'business.db')
+path = os.path.join(__dirname, 'businesses.db')
 
 engine = create_engine(path)
 db_session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
